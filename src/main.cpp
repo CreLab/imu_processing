@@ -1,11 +1,15 @@
 #include "sensor.h"
 #include "algo.h"
+#include "Streaming.h" 		// needed for the Serial output https://github.com/geneReeves/ArduinoStreaming
 
+#ifndef DUMMY_DATA
 static s_sensor_t SensorDataStruct;
+static void prepareSensorDataPackage(uint8_t* pSendDataStruct, s_sensor_t* pSensorDataStruct);
+#else
+static void prepareDummyDataPackage(uint8_t* SendDataStruct);
+#endif
 
 static void swap(void* input, void* output, uint8_t size);
-static void prepareSensorDataPackage(uint8_t* pSendDataStruct, s_sensor_t* pSensorDataStruct);
-static void prepareDummyDataPackage(uint8_t* SendDataStruct);
 
 void setup()
 {
@@ -15,33 +19,45 @@ void setup()
   {}
 
   Serial.println("Start System");
+  #ifndef DUMMY_DATA
   sensor_Initialize();
   SensorDataStruct.id = 0xA0FFFFB1;
+  #endif  
 
   Serial.println("Start System ... Done");
 }
 
 void loop()
 {
-    uint8_t SendDataStruct[49] = {0};
+    uint8_t SendDataStruct[52] = {0};
 
-    sensor_Read_All(&SensorDataStruct);
+#ifndef DUMMY_DATA
+      sensor_Read_All(&SensorDataStruct);
 
-#ifdef QUATERNION_ALGO
-    QuaternionUpdate(SensorDataStruct.Gx, SensorDataStruct.Gy, SensorDataStruct.Gz, 
-                     SensorDataStruct.Ax, SensorDataStruct.Ay, SensorDataStruct.Az, 
-                     SensorDataStruct.Mx, SensorDataStruct.My, SensorDataStruct.Mz);
+#ifdef PROCESSING_ACTIVE
+  #ifdef QUATERNION_ALGO
+      QuaternionUpdate(SensorDataStruct.Gx, SensorDataStruct.Gy, SensorDataStruct.Gz, 
+                      SensorDataStruct.Ax, SensorDataStruct.Ay, SensorDataStruct.Az, 
+                      SensorDataStruct.Mx, SensorDataStruct.My, SensorDataStruct.Mz);
+  #else
+      AHRSupdate(SensorDataStruct.Gx, SensorDataStruct.Gy, SensorDataStruct.Gz, 
+                SensorDataStruct.Ax, SensorDataStruct.Ay, SensorDataStruct.Az, 
+                SensorDataStruct.Mx, SensorDataStruct.My, SensorDataStruct.Mz);
+  #endif
+      
+      if (EulerUpdate(&SensorDataStruct.roll, &SensorDataStruct.pitch, &SensorDataStruct.yaw))
+      {
+        prepareSensorDataPackage(&SendDataStruct[0], &SensorDataStruct);
+        Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
+      }
 #else
-    AHRSupdate(SensorDataStruct.Gx, SensorDataStruct.Gy, SensorDataStruct.Gz, 
-               SensorDataStruct.Ax, SensorDataStruct.Ay, SensorDataStruct.Az, 
-               SensorDataStruct.Mx, SensorDataStruct.My, SensorDataStruct.Mz);
-#endif
-    
-    if (EulerUpdate(&SensorDataStruct.roll, &SensorDataStruct.pitch, &SensorDataStruct.yaw))
-    {
       prepareSensorDataPackage(&SendDataStruct[0], &SensorDataStruct);
       Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
-    }
+#endif
+#else
+      prepareDummyDataPackage(SendDataStruct);
+      Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
+#endif
 }
 
 static void swap(void* input, void* output, uint8_t size)
@@ -55,6 +71,7 @@ static void swap(void* input, void* output, uint8_t size)
   }
 }
 
+#ifndef DUMMY_DATA
 static void prepareSensorDataPackage(uint8_t* pSendDataStruct, s_sensor_t* pSensorDataStruct)
 {
       swap(&pSensorDataStruct->id, &pSendDataStruct[0],sizeof(uint32_t));
@@ -75,37 +92,27 @@ static void prepareSensorDataPackage(uint8_t* pSendDataStruct, s_sensor_t* pSens
       swap(&pSensorDataStruct->pitch,&pSendDataStruct[44],sizeof(float)); 
       swap(&pSensorDataStruct->yaw,&pSendDataStruct[48],sizeof(float));
 }
-
+#else
 static void prepareDummyDataPackage(uint8_t* pSendDataStruct)
 {
       uint32_t id = 0xA0FFFFB1;
-      int16_t twoByte = 0x0123;
       int32_t fourByte = 0x01234567;
 
       swap(&id, &pSendDataStruct[0],sizeof(uint32_t));
-      swap(&twoByte, &pSendDataStruct[4],sizeof(int16_t)); 
-      swap(&twoByte, &pSendDataStruct[6],sizeof(int16_t)); 
-      swap(&twoByte, &pSendDataStruct[8],sizeof(int16_t)); 
-      swap(&fourByte, &pSendDataStruct[10],sizeof(float));
-      swap(&fourByte, &pSendDataStruct[18],sizeof(float));
-      swap(&fourByte, &pSendDataStruct[26],sizeof(float));
+      swap(&fourByte, &pSendDataStruct[4],sizeof(float));
+      swap(&fourByte, &pSendDataStruct[8],sizeof(float));
+      swap(&fourByte, &pSendDataStruct[12],sizeof(float));
 
-      swap(&twoByte, &pSendDataStruct[34],sizeof(int16_t)); 
-      swap(&twoByte, &pSendDataStruct[36],sizeof(int16_t));
-      swap(&twoByte, &pSendDataStruct[38],sizeof(int16_t));
-      swap(&fourByte, &pSendDataStruct[40],sizeof(float)); 
-      swap(&fourByte, &pSendDataStruct[48],sizeof(float)); 
-      swap(&fourByte, &pSendDataStruct[56],sizeof(float)); 
+      swap(&fourByte, &pSendDataStruct[16],sizeof(float)); 
+      swap(&fourByte, &pSendDataStruct[20],sizeof(float)); 
+      swap(&fourByte, &pSendDataStruct[24],sizeof(float)); 
 
-      swap(&fourByte, &pSendDataStruct[64],sizeof(float)); 
+      swap(&fourByte, &pSendDataStruct[28],sizeof(float)); 
+      swap(&fourByte, &pSendDataStruct[32],sizeof(float)); 
+      swap(&fourByte, &pSendDataStruct[36],sizeof(float));
 
-      swap(&fourByte, &pSendDataStruct[68],sizeof(float)); 
-      swap(&fourByte, &pSendDataStruct[76],sizeof(float));
-
-      swap(&twoByte,&pSendDataStruct[84],sizeof(int16_t)); 
-      swap(&twoByte,&pSendDataStruct[86],sizeof(int16_t));
-      swap(&twoByte,&pSendDataStruct[88],sizeof(int16_t));
-      swap(&fourByte,&pSendDataStruct[90],sizeof(float)); 
-      swap(&fourByte,&pSendDataStruct[98],sizeof(float)); 
-      swap(&fourByte,&pSendDataStruct[106],sizeof(float));
+      swap(&fourByte,&pSendDataStruct[40],sizeof(float)); 
+      swap(&fourByte,&pSendDataStruct[44],sizeof(float)); 
+      swap(&fourByte,&pSendDataStruct[48],sizeof(float));
 }
+#endif

@@ -6,7 +6,7 @@
 /* The value of the last bit of the I2C address.        
    On the SparkFun 9DoF IMU breakout the default is 1, and when
    the ADR jumper is closed the value becomes 0 */
-#define AD0_VAL 1
+#define AD0_VAL 0
 
 ICM_20948_I2C ICM;
 
@@ -23,8 +23,9 @@ void sensor_Initialize()
     Serial.println(ICM.statusString());
     if (ICM.status != ICM_20948_Stat_Ok)
     {
-      Serial.println("Trying again...");
-      delay(500);
+      Serial.println("Sensor Init Failed ...");
+      while(1)
+      {}
     }
     Serial.println("Init Sensor ... Done");
 }
@@ -44,8 +45,6 @@ void sensor_Read_All(s_sensor_t *DataStruct)
     DataStruct->Mx = ICM.magX();
     DataStruct->My = ICM.magY();
     DataStruct->Mz = ICM.magZ();
-    DataStruct->Temperature = ICM.temp();
-    delay(30);
   }
 }
 #endif

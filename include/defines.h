@@ -3,9 +3,16 @@
 
 #include <stdint.h>
 #include <Arduino.h>
-//#include "Streaming.h" 		// needed for the Serial output https://github.com/geneReeves/ArduinoStreaming
 
-#if 1
+#if 0
+    #define DUMMY_DATA
+#endif
+
+#if 0
+    #define PROCESSING_ACTIVE
+#endif
+
+#if 0
     #define USE_MPU9250_DRV
 #else
     #define USE_ICM20948_DRV
