@@ -52,7 +52,17 @@ void loop()
       }
 #else
       prepareSensorDataPackage(&SendDataStruct[0], &SensorDataStruct);
-      Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
+
+      //send mag data to Processing
+      Serial.print("1.11");
+      Serial.write(",");
+      Serial.print(SensorDataStruct.Mx);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.My);
+      Serial.print(",");
+      Serial.println(SensorDataStruct.Mz);
+
+      //Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
 #endif
 #else
       prepareDummyDataPackage(SendDataStruct);
