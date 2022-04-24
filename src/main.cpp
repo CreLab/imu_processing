@@ -44,26 +44,57 @@ void loop()
                 SensorDataStruct.Ax, SensorDataStruct.Ay, SensorDataStruct.Az, 
                 SensorDataStruct.Mx, SensorDataStruct.My, SensorDataStruct.Mz);
   #endif
-      
+
+#if 0
       if (EulerUpdate(&SensorDataStruct.roll, &SensorDataStruct.pitch, &SensorDataStruct.yaw))
       {
         prepareSensorDataPackage(&SendDataStruct[0], &SensorDataStruct);
         Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
       }
 #else
+      getQValues(&SensorDataStruct.q0);
+      float heading = getFilteredHeading(SensorDataStruct.Mx, SensorDataStruct.My, SensorDataStruct.Mz);
+#endif
+#else
       prepareSensorDataPackage(&SendDataStruct[0], &SensorDataStruct);
 
+#endif
       //send mag data to Processing
-      Serial.print("1.11");
+      Serial.print("65535");
       Serial.write(",");
       Serial.print(SensorDataStruct.Mx);
       Serial.write(",");
       Serial.print(SensorDataStruct.My);
       Serial.print(",");
-      Serial.println(SensorDataStruct.Mz);
-
-      //Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
-#endif
+      Serial.print(SensorDataStruct.Mz);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.q0);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.q1);
+      Serial.print(",");
+      Serial.print(SensorDataStruct.q2);
+      Serial.print(",");
+      Serial.print(SensorDataStruct.q3);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.pitch);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.roll);
+      Serial.print(",");
+      Serial.print(SensorDataStruct.yaw);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.Ax);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.Ay);
+      Serial.print(",");
+      Serial.print(SensorDataStruct.Az);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.Gx);
+      Serial.write(",");
+      Serial.print(SensorDataStruct.Gy);
+      Serial.print(",");
+      Serial.print(SensorDataStruct.Gz);
+      Serial.print(",");
+      Serial.println(heading);
 #else
       prepareDummyDataPackage(SendDataStruct);
       Serial.write(&SendDataStruct[0], sizeof(SendDataStruct));
@@ -72,7 +103,7 @@ void loop()
 
 static void swap(void* input, void* output, uint8_t size)
 {
-	uint8_t* data = (uint8_t*)input;
+  uint8_t* data = (uint8_t*)input;
   uint8_t* tmp = (uint8_t*)output;
 
   for (uint8_t cnt = 0; cnt < size; cnt++)

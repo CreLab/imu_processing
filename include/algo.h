@@ -14,4 +14,8 @@ void QuaternionUpdate(float gx, float gy, float gz,
 
 int EulerUpdate(float* roll, float* pitch, float* yaw);
 
+void getQValues(float* qParams);
+
+float getFilteredHeading(float Mx, float My, float Mz);
+
 #endif /* __ALGO_H */

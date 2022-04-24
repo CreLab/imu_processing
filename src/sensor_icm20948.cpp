@@ -12,7 +12,7 @@ ICM_20948_I2C ICM;
 
 void sensor_Initialize()
 {
-    Serial.println("Init Sensor");
+    Serial.println("Init ICM_20948 Sensor");
     // init chip
     Wire.begin();
     Wire.setClock(400000);

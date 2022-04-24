@@ -51,6 +51,8 @@ int EulerUpdate(float* roll, float* pitch, float* yaw)
   float p = 0.0f;
   float y = 0.0f;
 
+  float pQ[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+
   // Serial print and/or display at 0.5 s rate independent of data rates
   float time_now = (float)millis();
   deltat2 = time_now - time_previous2;
@@ -75,11 +77,7 @@ int EulerUpdate(float* roll, float* pitch, float* yaw)
       // http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
       // which has additional links.
 
-#ifdef QUATERNION_ALGO
-      const float* pQ = getQuaternionParams();
-#else
-      float pQ[4] = {q0, q1, q2, q3};
-#endif
+      getQValues(pQ);
 
       r  = atan2(2.0f * (pQ[0] * pQ[1] + pQ[2] * pQ[3]), pQ[0] * pQ[0] - pQ[1] * pQ[1] - pQ[2] * pQ[2] + pQ[3] * pQ[3]);
       p = -asin(2.0f * (pQ[1] * pQ[3] - pQ[0] * pQ[2]));
@@ -99,4 +97,59 @@ int EulerUpdate(float* roll, float* pitch, float* yaw)
   }
 
   return 0;
+}
+
+void getQValues(float* qParams)
+{
+#ifdef QUATERNION_ALGO
+      getQuaternionParams(qParams);
+#else
+      qParams[0] = q0;
+      qParams[1] = q1;
+      qParams[2] = q2;
+      qParams[3] = q3;
+#endif
+}
+
+float getFilteredHeading(float Mx, float My, float Mz)
+{
+  float heading, headingDegrees, headingFiltered, declination;
+
+  float X;
+  float Y;
+  float Z;
+
+  // From the datasheet: 0.92 mG/digit
+  //* Earth magnetic field ranges from 0.25 to 0.65 Gauss, so these are the values that we need to get approximately.
+
+  //---- X-Axis
+  X = Mx*0.00092; // Gauss unit
+
+  //---- Y-Axis
+  Y = My*0.00092;
+
+  //---- Z-Axis
+  Z = Mz*0.00092;
+
+  //Calculating Heading
+  heading = atan2(Y, X);
+
+  // Correcting the heading with the declination angle depending on your location
+  // You can find your declination angle at: http://www.ngdc.noaa.gov/geomag-web/
+  // At my location it's 4.2 degrees => 0.073 rad
+  // My city = -12.44 degrees = > -0.19540706305329 rad
+  //http://www.magnetic-declination.com/
+  //declination = 0.073; 
+  declination = -0.195; 
+  heading += declination;
+
+  // Correcting when signs are reveresed
+  if(heading <0) heading += 2*PI;
+  // Correcting due to the addition of the declination angle
+  if(heading > 2*PI)heading -= 2*PI;
+  headingDegrees = heading * 180/PI; // The heading in Degrees unit
+  // Smoothing the output angle / Low pass filter 
+  headingFiltered = headingFiltered*0.85 + headingDegrees*0.15;
+
+  return headingFiltered;
 }

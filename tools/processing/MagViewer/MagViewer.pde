@@ -21,6 +21,14 @@ int i;
 float cVal;
 Serial myPort;
 
+int numValues = 3; // number of input values or sensors
+// * change this to match how many values your Arduino is sending *
+
+float[] values = new float[numValues];
+int[] min = new int[numValues];
+int[] max = new int[numValues];
+color[] valColor = new color[numValues];
+
 void setup()
 {
     size(800, 800);
@@ -35,6 +43,23 @@ void setup()
     background(20);
     colorMode(HSB, 300);
     setupGrid();
+    
+    // initialize:
+    // *edit these* to match how many values you are reading, and what colors you like 
+    values[0] = 0;
+    min[0] = 0;
+    max[0] = 1023; // full range example, e.g. any analogRead
+    valColor[0] = color(255, 0, 0); // red
+  
+    values[1] = 0; 
+    min[1] = 0;
+    max[1] = 700;  // partial range example, e.g. IR distance sensor
+    valColor[1] = color(0, 255, 0); // green
+  
+    values[2] = 0;
+    min[2] = 0;
+    max[2] = 1;    // digital input example, e.g. a button
+    valColor[2] = color(0, 0, 255); // blue
 }
 
 void draw()

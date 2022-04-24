@@ -6,9 +6,11 @@
 void MadgwickQuaternionUpdate(float ax, float ay, float az, float gx, float gy,
                               float gz, float mx, float my, float mz,
                               float deltat);
+                              
 void MahonyQuaternionUpdate(float ax, float ay, float az, float gx, float gy,
                             float gz, float mx, float my, float mz,
                             float deltat);
-const float* getQuaternionParams();
+
+void getQuaternionParams(float* qValues);
 
 #endif // _QUATERNIONFILTERS_H_

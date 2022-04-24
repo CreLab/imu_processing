@@ -8,11 +8,11 @@
     #define DUMMY_DATA
 #endif
 
-#if 0
+#if 1
     #define PROCESSING_ACTIVE
 #endif
 
-#if 0
+#if 1
     #define USE_MPU9250_DRV
 #else
     #define USE_ICM20948_DRV
@@ -47,6 +47,11 @@ typedef struct
   	float My;
   	float Mx;
   	float Mz;
+
+    float q0;
+  	float q1;
+  	float q2;
+  	float q3;
 
     float roll;
   	float pitch;
