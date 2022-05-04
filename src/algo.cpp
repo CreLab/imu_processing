@@ -113,11 +113,14 @@ void getQValues(float* qParams)
 
 float getFilteredHeading(float Mx, float My, float Mz)
 {
-  float heading, headingDegrees, headingFiltered, declination;
+  float heading = 0.0f;
+  float headingDegrees = 0.0f;
+  float headingFiltered = 0.0f;
+  float declination = 0.0f;
 
-  float X;
-  float Y;
-  float Z;
+  float X = 0.0f;
+  float Y = 0.0f;
+  float Z = 0.0f;
 
   // From the datasheet: 0.92 mG/digit
   //* Earth magnetic field ranges from 0.25 to 0.65 Gauss, so these are the values that we need to get approximately.
@@ -144,12 +147,24 @@ float getFilteredHeading(float Mx, float My, float Mz)
   heading += declination;
 
   // Correcting when signs are reveresed
-  if(heading <0) heading += 2*PI;
+  if (heading <0)
+  {
+    heading += 2*PI;
+  }
+
   // Correcting due to the addition of the declination angle
-  if(heading > 2*PI)heading -= 2*PI;
+  if (heading > 2*PI)
+  {
+    heading -= 2*PI;
+  }
+
   headingDegrees = heading * 180/PI; // The heading in Degrees unit
   // Smoothing the output angle / Low pass filter 
+#if 0
   headingFiltered = headingFiltered*0.85 + headingDegrees*0.15;
+#else
+  headingFiltered = headingDegrees;
+#endif
 
   return headingFiltered;
 }

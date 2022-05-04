@@ -11,9 +11,14 @@
 
 import processing.serial.*;
 
-float Xval = 0;        
-float Yval = 0;      
-float Zval = 0;       
+float[] M = new float[3];
+float[] q = new float[4];
+float pitch = 0.00;
+float roll = 0.00;
+float yaw = 0.00;
+float[] A = new float[3];
+float[] G = new float[3];
+float heading = 0.00;
 
 int maxPoints = 20000;
 int i;
@@ -67,6 +72,10 @@ void draw()
     stroke(180);
     strokeWeight(2);
 
+    float Xval = M[0];        
+    float Yval = M[1];      
+    float Zval = M[2];
+
     stroke(55, 250, 300);
     point(Xval + width/2, Yval + height/2);
     stroke(130, 250, 300);
@@ -75,49 +84,57 @@ void draw()
     point(Xval + width/2, Zval + height/2);
 }
 
-void serialEvent(Serial myPort)
-{
+void serialEvent(Serial myPort) { 
+  try {
     // get the ASCII string:
     String inString = myPort.readStringUntil('\n');
-    println(inString);
-    
-    if (inString != null)
-    {
-        // trim off any whitespace:
-        // inString = trim(inString);
-        println(inString);
-        // split the string on the commas and convert the
-        // resulting substrings into an integer array:
-        float[] magData = float(split(inString, ","));
-        // if the array has at least four elements, you know
-        // you got the values plus the header.  Put the numbers 
-        // in the magData array
-        if (magData.length >=4)
+    //println("raw: \t" + inString); // <- uncomment this to debug serial input from Arduino
+
+    if (inString != null) {
+      // trim off any whitespace:
+      //println(inString);
+      inString = trim(inString);
+
+      // split the string on the delimiters and convert the resulting substrings into an float array:
+      values = float(splitTokens(inString, ",")); // delimiter can be comma space or tab
+
+      // if the array has at least the # of elements as your # of sensors, you know
+      //   you got the whole data packet.
+      if (values.length >= numValues)
+      {
+        if ((int)values[0] == 65535)
         {
-            if (magData[0] == 1.11)
-            {  // test header
-                Xval = (magData[1]/2);  // scale data to window
-                Yval = (magData[2]/2);
-                Zval = (magData[3]/2);
-            }
-            
-            println((int)Xval + "\t" + (int)Yval + "\t" + (int)Zval );  
-
-            //Xval = map(Xval, -1.0, 1.0, -200.0, 200.0);
-            //Yval = map(Yval, -1.0, 1.0, -200.0, 200.0);
-            //Zval = map(Zval, -1.0, 1.0, 200.0, -200.0);
-
-            //println((int)Xval + "\t" + (int)Yval + "\t" + (int)Zval );  
-            //// put points into the array
-
-            //i =  ++i % (maxPoints - 2);  
-            //x[i] = round(Xval);
-            //z[i] = round(Yval);  //switch channels x<-> y why?
-            //y[i] = round(Zval);  //switch channels x<-> y
+          M[0] = values[1];
+          M[1] = values[2];
+          M[2] = values[3];
+          
+          q[0] = values[4];
+          q[1] = values[5];
+          q[2] = values[6];
+          q[3] = values[7];
+          
+          pitch = values[8];
+          roll = values[9];
+          yaw = values[10];
+          
+          A[0] = values[11];
+          A[1] = values[12];
+          A[2] = values[13];
+          
+          G[0] = values[14];
+          G[1] = values[15];
+          G[2] = values[16];
+          
+          heading = values[17];
         }
+      }
     }
+  }
+  catch(RuntimeException e) {
+    // only if there is an error:
+    e.printStackTrace();
+  }
 }
-
 
 void keyPressed()
 {  // spacebar erases drawing
