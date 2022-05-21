@@ -32,39 +32,33 @@ int numValues = 3; // number of input values or sensors
 float[] values = new float[numValues];
 int[] min = new int[numValues];
 int[] max = new int[numValues];
-color[] valColor = new color[numValues];
 
 void setup()
 {
     size(800, 800);
+    colorMode(RGB);
     background(0);
     noFill();
     stroke(255);
     strokeWeight(2);
+    textSize(18);
 
     myPort = new Serial(this, "COM4", 115200);
     myPort.bufferUntil('\n');
     
     background(20);
-    colorMode(HSB, 300);
     setupGrid();
     
     // initialize:
     // *edit these* to match how many values you are reading, and what colors you like 
-    values[0] = 0;
     min[0] = 0;
     max[0] = 1023; // full range example, e.g. any analogRead
-    valColor[0] = color(255, 0, 0); // red
   
-    values[1] = 0; 
     min[1] = 0;
     max[1] = 700;  // partial range example, e.g. IR distance sensor
-    valColor[1] = color(0, 255, 0); // green
   
-    values[2] = 0;
     min[2] = 0;
     max[2] = 1;    // digital input example, e.g. a button
-    valColor[2] = color(0, 0, 255); // blue
 }
 
 void draw()
@@ -76,12 +70,14 @@ void draw()
     float Yval = M[1];      
     float Zval = M[2];
 
-    stroke(55, 250, 300);
-    point(Xval + width/2, Yval + height/2);
-    stroke(130, 250, 300);
-    point(Yval + width/2, Zval + height/2);
-    stroke(280, 250, 300);
-    point(Xval + width/2, Zval + height/2);
+    stroke(0, 0, 255);
+    point((Xval * 2) + width/2, (Yval * 2) + height/2);
+    
+    stroke(255, 179, 0);
+    point((Xval * 2)  + width/2, (Zval * 2) + height/2);
+    
+    stroke(0, 255, 0);
+    point((Yval * 2)  + width/2, (Zval * 2) + height/2);
 }
 
 void serialEvent(Serial myPort) { 
@@ -147,27 +143,29 @@ void keyPressed()
 
 void setupGrid()
 {
-    fill(55, 300, 300);
-    textSize(18);
+    fill(0, 0, 255);
     text("XY", width - 40, height - 100);
-    fill(130, 300, 300);
-    text("YZ", width - 40, height - 70);
-    fill(280, 100, 300);
-    text("XZ", width - 40, height - 40);
-    stroke(0, 50, 50);
+    
+    fill(255, 179, 0);
+    text("XZ", width - 40, height - 70);
+    
+    fill(0, 255, 0);
+    text("YZ", width - 40, height - 40);
+    
+    stroke(50, 50, 50);
     
     for (int i =0; i < width; i+=(width/8))
     {
         if (i == width/2)
         {
-            stroke(0, 50, 100);
+            stroke(100, 100, 100);
         }
         else
         {
-            stroke(0, 50, 50);
+            stroke(50, 50, 50);
         }
         line(i, 0, i, height);
-        fill(0, 0, 250);
+        fill(250, 250, 250);
         text(i, i, 20);
     }
     
@@ -175,15 +173,15 @@ void setupGrid()
     {
         if (i == height/2)
         {
-            stroke(0, 50, 100);
+            stroke(100, 100, 100);
         }
         else
         {
-            stroke(0, 50, 50);
+            stroke(50, 50, 50);
         }
         
         line(0, i, width, i);
-        fill(0, 0, 250);
+        fill(250, 250, 250);
         text(i, 20, i);
     }
 }

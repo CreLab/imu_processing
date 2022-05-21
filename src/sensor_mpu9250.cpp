@@ -2,7 +2,7 @@
 
 #ifdef USE_MPU9250_DRV
 
-#if 0
+#if 1
   #define MPU9250_BOLDERFLIGHT_LIB
   #include "MPU9250.h"		// https://github.com/bolderflight/MPU9250
 #else
@@ -75,27 +75,31 @@ void sensor_Read_All(s_sensor_t *DataStruct)
   DataStruct->Ax = IMU.getAccelX_mss();
   DataStruct->Ay = IMU.getAccelY_mss();
   DataStruct->Az = IMU.getAccelZ_mss();
+
   DataStruct->Gx = IMU.getGyroX_rads();
   DataStruct->Gy = IMU.getGyroY_rads();
   DataStruct->Gz = IMU.getGyroZ_rads();
-  DataStruct->Mx = IMU.getMagX_uT();
-  DataStruct->My = IMU.getMagY_uT();
-  DataStruct->Mz = IMU.getMagZ_uT();
+
+  DataStruct->Mx = (IMU.getMagX_uT() - 62.99259669269141) / 49.25142271505528;
+  DataStruct->My = (IMU.getMagY_uT() - 37.000401835511646) / 50.04079664168832;
+  DataStruct->Mz = (IMU.getMagZ_uT() - (-47.245231720315054)) / 49.93739253676479;
 #else
   xyzFloat accRaw = IMU.getAccRawValues();
   xyzFloat accCorrRaw = IMU.getCorrectedAccRawValues();
   xyzFloat gValue = IMU.getGyrValues();
   xyzFloat magValue = IMU.getMagValues();
 
-  DataStruct->Ax = accRaw.x;
-  DataStruct->Ay = accRaw.y;
-  DataStruct->Az = accRaw.z;
+  DataStruct->Ax = (accRaw.x + 829.9776683737704) / 11835.967506520801;
+  DataStruct->Ay = (accRaw.y + 468.9941072105943) / 23235.787109756428;
+  DataStruct->Az = (accRaw.z + 3399.704448082534) / 23063.453548005557;
+
   DataStruct->Gx = gValue.x;
   DataStruct->Gy = gValue.y;
   DataStruct->Gz = gValue.z;
-  DataStruct->Mx = magValue.x;
-  DataStruct->My = magValue.y;
-  DataStruct->Mz = magValue.z;
+
+  DataStruct->Mx = (magValue.x - 61.52574705754689) / 24.019885729336412;
+  DataStruct->My = (magValue.y - 40.54995781046352) / 1.0;
+  DataStruct->Mz = (magValue.z + 107.24235657273655) / 162.25630772708948;
 #endif
 }
 #endif

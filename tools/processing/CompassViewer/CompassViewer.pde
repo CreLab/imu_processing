@@ -13,6 +13,7 @@ import controlP5.*;
 int numValues = 18; // number of sensor data
 int textSize = 15;
 
+float factor = 100.0;
 float[] values = new float[numValues];
 
 float[] M = new float[3];
@@ -128,23 +129,23 @@ void drawPlot()
     {
       curData = A[i];
       
-      min[0] = -17000;
-      max[0] = 17000; // full range example, e.g. any analogRead
-      min[1] = -17000;
-      max[1] = 17000; // full range example, e.g. any analogRead
-      min[2] = -17000;
-      max[2] = 17000; // full range example, e.g. any analogRead
+      min[0] = -1000;
+      max[0] = 1000; // full range example, e.g. any analogRead
+      min[1] = -1000;
+      max[1] = 1000; // full range example, e.g. any analogRead
+      min[2] = -1000;
+      max[2] = 1000; // full range example, e.g. any analogRead
     }
     else if (dataSelect == 2)
     {
       curData = G[i];
       
-      min[0] = -250;
-      max[0] = 250; // full range example, e.g. any analogRead
-      min[1] = -250;
-      max[1] = 250; // full range example, e.g. any analogRead
-      min[2] = -250;
-      max[2] = 250; // full range example, e.g. any analogRead
+      min[0] = -500;
+      max[0] = 500; // full range example, e.g. any analogRead
+      min[1] = -500;
+      max[1] = 500; // full range example, e.g. any analogRead
+      min[2] = -500;
+      max[2] = 500; // full range example, e.g. any analogRead
     }
     else
     {
@@ -222,9 +223,9 @@ void serialEvent(Serial myPort) {
       {
         if ((int)values[0] == 65535)
         {
-          M[0] = values[1];
-          M[1] = values[2];
-          M[2] = values[3];
+          M[0] = values[1]*factor;
+          M[1] = values[2]*factor;
+          M[2] = values[3]*factor;
           
           q[0] = values[4];
           q[1] = values[5];
@@ -235,13 +236,13 @@ void serialEvent(Serial myPort) {
           roll = values[9];
           yaw = values[10];
           
-          A[0] = values[11];
-          A[1] = values[12];
-          A[2] = values[13];
+          A[0] = values[11]*factor;
+          A[1] = values[12]*factor;
+          A[2] = values[13]*factor;
           
-          G[0] = values[14];
-          G[1] = values[15];
-          G[2] = values[16];
+          G[0] = values[14]*factor;
+          G[1] = values[15]*factor;
+          G[2] = values[16]*factor;
           
           heading = values[17];
         }

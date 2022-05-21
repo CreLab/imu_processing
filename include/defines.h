@@ -5,11 +5,7 @@
 #include <Arduino.h>
 
 #if 0
-    #define DUMMY_DATA
-#endif
-
-#if 1
-    #define PROCESSING_ACTIVE
+    #define FREE_IMU_CAL
 #endif
 
 #if 1
