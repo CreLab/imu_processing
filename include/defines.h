@@ -8,11 +8,7 @@
     #define FREE_IMU_CAL
 #endif
 
-#if 1
-    #define USE_MPU9250_DRV
-#else
-    #define USE_ICM20948_DRV
-#endif
+#define USE_ICM20948_DRV
 
 #if 1
     #define MADGWICK_AHRS_ALGO

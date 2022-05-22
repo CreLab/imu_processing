@@ -43,19 +43,17 @@ void loop()
 
 #ifdef FREE_IMU_CAL
     Serial.print(SensorDataStruct.Ax, 8);
-    Serial.write(",");
+    Serial.write(";");
     Serial.print(SensorDataStruct.Ay, 8);
-    Serial.print(",");
+    Serial.print(";");
     Serial.print(SensorDataStruct.Az, 8);
-    Serial.write(",");
+    Serial.write(";");
     Serial.print(SensorDataStruct.Mx, 8);
-    Serial.write(",");
+    Serial.write(";");
     Serial.print(SensorDataStruct.My, 8);
-    Serial.print(",");
+    Serial.print(";");
     Serial.print(SensorDataStruct.Mz, 8);
     Serial.println("");
-
-    delay(100);
 #else
     Serial.print("65535");
     Serial.write(",");
@@ -93,6 +91,7 @@ void loop()
     Serial.print(",");
     Serial.println(heading);
 #endif
+    delay(100);
 }
 
 static void swap(void* input, void* output, uint8_t size)
