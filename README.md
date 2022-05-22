@@ -27,23 +27,23 @@ Zum Ausführen der Firmware und Tools wird folgendes benötigt:
 
 ## Anschließen der Hardware
 
-![alt text](https://github.com/CreLab/imu_processing/blob/main/doc/HardwareSetup.png)
+<img src="https://github.com/CreLab/imu_processing/blob/main/doc/HardwareSetup.png" width="304" height="277"/>
 
 ## Ordnerbeschreibung
 
 ```
-├── doc       --> Found documenations about the topic
-├── include   --> Header includes
-├── lib       --> PlatformIO libs
-├── src       --> Source files
-├── test      --> PlatformIO test
-├── tools     --> Processing Tools
+├── doc                      --> Found documenations about the topic
+├── include                  --> Header includes
+├── lib                      --> PlatformIO libs
+├── src                      --> Source files
+├── test                     --> PlatformIO test
+├── tools                    --> Processing Tools
 │    ├── AccelerometerTest   --> Viewer for accelerometer data
 │    ├── CompassViewer       --> Viewer for compass East/South/West/North
 │    ├── MagCalibration      --> Calibration tool for magnitude sensor
 │    └── MagViewer           --> Viewer for magnitude data
-├── .gitignore       --> Ignore list to exclude files and directories for github checkin
-└── platformio.ini   --> Init file for PlatformIO
+├── .gitignore               --> Ignore list to exclude files and directories for github checkin
+└── platformio.ini           --> Init file for PlatformIO
 ```
 
 ## Compass Kalibrierung
@@ -57,7 +57,7 @@ mit `#if 1` aktiviert und der Code anschließend auf die Hardware hochgeladen.
 Danach ist es möglich das Tool *MagCalibration* mit Processing3 auszführen. Beim Bewegen des Sensors
 sollte ein ähnliches Bild, wie das folgende, entstehen:
 
-![Alt-Text](https://github.com/CreLab/imu_processing/blob/main/doc/NotCalibratedMagneto.png)
+<img src="https://github.com/CreLab/imu_processing/blob/main/doc/NotCalibratedMagneto.png" width="400" height="412"/>
 
 Während das Tool zur Kalibierung ausgeführt wird, schreibt das es im Hintergrund gleichzeitig alle erfassten Daten
 in eine *.csv* Datei. In dieser Datei werden alle Werte des Accelerometers und Magnetometers erfasst.
@@ -79,7 +79,7 @@ Falls Excel mit der englischen Zahlendarstellung umgehen kann, muss dieser Schri
 Nun ist alles bereit für die Berechnung der Kalibrierungswerte. Dazu einfach das *freeimu_cal.bat* mit einem doppel-Klick
 ausführen und es erscheint folgendes Fenster:
 
-![Alt-Text](https://github.com/CreLab/imu_processing/blob/main/doc/PythonOutput.png)
+<img src="https://github.com/CreLab/imu_processing/blob/main/doc/PythonOutput.png" width="436" height="186"/>
 
 Die Fehlermeldungen können vorerst ignoriert werden. Diese passieren auf Grund der Python Version, welche nicht mehr alle 
 Funktionen für die Berechnung der Accelerometer Kalibrierungswerte bereit stellt.
@@ -95,6 +95,6 @@ Ist dieser Schritt erledigt, wird in der Datei *defines.h* das Define `#define F
 und damit die Kalibrierungswerte übernommen. Nach einem erneuten Hochladen der Firmware, kann jetzt das Tool *MagViewer* 
 ausgeführt werden und ein ähnliches Bild erscheinen.
 
-![Alt-Text](https://github.com/CreLab/imu_processing/blob/main/doc/CalibratedMagneto.png)
+<img src="https://github.com/CreLab/imu_processing/blob/main/doc/CalibratedMagneto.png" width="400" height="413"/>
 
 Jetzt ist das Magnetometer und das Accelerometer kalibriert und einsatzbereit.
