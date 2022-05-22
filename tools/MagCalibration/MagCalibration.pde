@@ -55,7 +55,7 @@ void draw()
     stroke(180);
     strokeWeight(2);
 
-    float factor = 50.0;
+    float factor = 2.5;
 
     float XvalW = ((M[0] * factor) + width/2);        
     float YvalW = ((M[1] * factor) + width/2);      
@@ -93,9 +93,9 @@ void serialEvent(Serial myPort)
       inString = trim(data);
 
       // split the string on the delimiters and convert the resulting substrings into an float array:
-      values = float(splitTokens(inString, ",")); // delimiter can be comma space or tab
+      values = float(splitTokens(inString, ";")); // delimiter can be comma space or tab
 
-          // if the array has at least the # of elements as your # of sensors, you know
+      // if the array has at least the # of elements as your # of sensors, you know
       //   you got the whole data packet.
       if (values.length >= numValues)
       {

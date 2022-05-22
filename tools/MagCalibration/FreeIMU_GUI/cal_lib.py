@@ -74,17 +74,21 @@ def compute_calibrate_data(data, offsets, scale):
 
 
 if True:
+    (acc_offsets, acc_scale) = calibrate_from_file("acc.txt")
+    (mag_offsets, mag_scale) = calibrate_from_file("magn.txt")
+    
     print("----------------------------------------")
-    print("Calibrating from acc.txt")
-    (offsets, scale) = calibrate_from_file("acc.txt")
-    print("Offsets:")
-    print(offsets)
-    print("Scales:")
-    print(scale)
+    print("/* Calibrating from acc.txt")
+    print(" * Offsets:")
+    print(f" * {acc_offsets}")
+    print(" * Scales:")
+    print(f" * {acc_scale}")
+    print(" */")
+
     print("----------------------------------------")
-    print("Calibrating from magn.txt")
-    (offsets, scale) = calibrate_from_file("magn.txt")
-    print("Offsets:")
-    print(offsets)
-    print("Scales:")
-    print(scale)
+    print("/* Calibrating from magn.txt")
+    print(" * Offsets:")
+    print(f" * {mag_offsets}")
+    print(" * Scales:")
+    print(f" * {mag_scale}")
+    print(" */")

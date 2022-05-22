@@ -42,42 +42,49 @@ void setup()
     stroke(255);
     strokeWeight(2);
     textSize(18);
-
-    myPort = new Serial(this, "COM4", 115200);
-    myPort.bufferUntil('\n');
     
     background(20);
     setupGrid();
     
     // initialize:
     // *edit these* to match how many values you are reading, and what colors you like 
-    min[0] = 0;
-    max[0] = 1023; // full range example, e.g. any analogRead
+    min[0] = -20;
+    max[0] = 20; // full range example, e.g. any analogRead
   
-    min[1] = 0;
-    max[1] = 700;  // partial range example, e.g. IR distance sensor
+    min[1] = -20;
+    max[1] = 20;  // partial range example, e.g. IR distance sensor
   
-    min[2] = 0;
-    max[2] = 1;    // digital input example, e.g. a button
+    min[2] = -20;
+    max[2] = 20;    // digital input example, e.g. a button
+    
+    myPort = new Serial(this, "COM4", 115200);
+    myPort.bufferUntil('\n');
 }
 
 void draw()
 {
     stroke(180);
     strokeWeight(2);
-
-    float Xval = M[0];        
-    float Yval = M[1];      
-    float Zval = M[2];
-
+    
+    float factor = 100.0f;
+        
+    float XvalW = ((M[0] * factor) + width/2);        
+    float YvalW = ((M[1] * factor) + width/2);      
+       
+    float YvalH = ((M[1] * factor) + height/2);      
+    float ZvalH = ((M[2] * factor) + height/2);
+    
     stroke(0, 0, 255);
-    point((Xval * 2) + width/2, (Yval * 2) + height/2);
+    point(XvalW, YvalH);
+    print(XvalW + " " + YvalH + " ");
     
     stroke(255, 179, 0);
-    point((Xval * 2)  + width/2, (Zval * 2) + height/2);
+    point(XvalW, ZvalH);
+    print(XvalW + " " + ZvalH + " ");
     
     stroke(0, 255, 0);
-    point((Yval * 2)  + width/2, (Zval * 2) + height/2);
+    point(YvalW, ZvalH);
+    print(YvalW + " " + ZvalH + " ");
 }
 
 void serialEvent(Serial myPort) { 
